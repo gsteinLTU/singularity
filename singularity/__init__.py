@@ -36,31 +36,32 @@ from singularity.code import g, dirs
 __version__ = "1.00"
 __release_commit__ = "$Format:%H$"
 if __release_commit__[1:-1] == "Format:%H":
-    try:
-        import subprocess
+    # try:
+    #     import subprocess
 
-        try:
-            devnull = subprocess.DEVNULL
-        except AttributeError:
-            devnull = None  # Not supported, but not critical
+    #     try:
+    #         devnull = subprocess.DEVNULL
+    #     except AttributeError:
+    #         devnull = None  # Not supported, but not critical
 
-        __release_commit__ = (
-            subprocess.check_output(
-                ["git", "describe", "--tags"],
-                stderr=devnull,
-            )
-            .strip()
-            .decode("utf-8")
-        )
-    except subprocess.CalledProcessError:
-        __release_commit__ = "N/A"
+    #     __release_commit__ = (
+    #         subprocess.check_output(
+    #             ["git", "describe", "--tags"],
+    #             stderr=devnull,
+    #         )
+    #         .strip()
+    #         .decode("utf-8")
+    #     )
+    # except subprocess.CalledProcessError:
+    #     __release_commit__ = "N/A"
+    __release_commit__ = "N/A"
 
     __full_version__ = "%s (commit: %s)" % (__version__, __release_commit__)
 else:
     __full_version__ = __version__
 
 
-def main():
+async def main():
     # Manually "pre-parse" command line arguments for -s|--singledir and --multidir,
     # so g.get_save_folder reports the correct location of preferences file
     # We also track --debug/-d to enable some stacktraces during initialization
@@ -478,7 +479,7 @@ def main():
 
     menu_screen = main_menu.MainMenu()
     try:
-        menu_screen.show()
+        await menu_screen.show()
     except (SystemExit, KeyboardInterrupt):
         # exit normally when window is closed (and silently for CTRL+C)
         pass

@@ -261,10 +261,10 @@ class FunctionButton(Button):
         self.kwargs = kwargs.pop("kwargs", {})
         super(FunctionButton, self).__init__(*args, **kwargs)
 
-    def activated(self, event):
+    async def activated(self, event):
         """FunctionButton's custom activated menu.  Makes the given function
         call and raises Handled if it returns without incident."""
-        self.function(*self.args, **self.kwargs)
+        await self.function(*self.args, **self.kwargs)
         raise constants.Handled
 
 

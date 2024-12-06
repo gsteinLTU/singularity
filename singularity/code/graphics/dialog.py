@@ -26,6 +26,8 @@ from typing import Optional
 import pygame
 import operator
 
+import asyncio
+
 from singularity.code.global_hotkeys import detect_global_hotkey
 from singularity.code.graphics import g, constants, widget, text, button, listbox
 
@@ -124,7 +126,7 @@ def handle_ebook(event):
         pygame.event.post(new_event)
 
 
-def call_dialog(dialog, parent=None):
+async def call_dialog(dialog, parent=None):
     parent_dialog = None
     target = parent
     while target:
@@ -136,7 +138,7 @@ def call_dialog(dialog, parent=None):
     if parent_dialog:
         parent_dialog.lost_focus()
 
-    retval = dialog.show()
+    retval = await dialog.show()
 
     if parent_dialog:
         parent_dialog.regained_focus()
@@ -225,7 +227,7 @@ class Dialog(text.Text):
         self.stop_timer()
         self.start_timer()
 
-    def show(self):
+    async def show(self):
         """Shows the dialog and enters an event-handling loop."""
         from singularity.code.mixer import play_music
 
@@ -240,7 +242,7 @@ class Dialog(text.Text):
 
         # Force a timer tick at the start to make sure everything's initialized.
         if self.needs_timer:
-            self.handle(pygame.event.Event(pygame.USEREVENT))
+            await self.handle(pygame.event.Event(pygame.USEREVENT))
             Dialog.top.maybe_update()
             pygame.display.flip()
 
@@ -251,10 +253,22 @@ class Dialog(text.Text):
             # Update handles updates of all kinds to all widgets, as needed.
             Dialog.top.maybe_update()
             play_music()
-            event = pygame.event.wait()
-            result = self.handle(event)
-            if result != constants.NO_RESULT:
+
+            had_result = False
+            for event in pygame.event.get():
+                result = await self.handle(event)
+                print("Dialog loop result:", result)
+                if result != constants.NO_RESULT:
+                    # break both loops
+                    had_result = True
+                    break            
+
+            if had_result:
                 break
+            
+            pygame.display.update()
+            await asyncio.sleep(1/g.FPS)
+            
         self.stop_timer()
         self.visible = False
         Dialog.current_dialog = d
@@ -288,7 +302,7 @@ class Dialog(text.Text):
             h for h in self.key_handlers.get(key, []) if h[1] != handler
         ]
 
-    def handle(self, event):
+    async def handle(self, event):
         """Sends an event through all the applicable handlers, returning
         constants.NO_RESULT if the event goes unhandled or is handled without
         requesting the dialog to exit.  Otherwise, returns the value provided
@@ -302,7 +316,7 @@ class Dialog(text.Text):
             # Compress multiple MOUSEMOTION events into one.
             # Note that the pos will be wrong, so pygame.mouse.get_pos() must
             # be used instead.
-            time.sleep(1.0 / g.FPS)
+            await asyncio.sleep(1.0 / g.FPS)
             pygame.event.clear(pygame.MOUSEMOTION)
 
             # Generic mouse motion handlers.

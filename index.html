@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+  <head>
+      <script src="https://cdn.jsdelivr.net/pyodide/dev/debug/pyodide.js"></script>
+  </head>
+  <body>
+    <script type="text/javascript">
+      async function main(){
+        let pyodide = await loadPyodide();
+        
+        let sdl2Canvas = document.createElement("canvas");
+        sdl2Canvas.id = "canvas";
+        sdl2Canvas.style.margin = "0 auto";
+        sdl2Canvas.style.display = "block";
+        sdl2Canvas.width = 800;
+        sdl2Canvas.height = 600;
+        
+        document.body.appendChild(sdl2Canvas);
+
+
+        pyodide.canvas.setCanvas2D(sdl2Canvas);
+        
+        await pyodide.loadPackage(["numpy", "pygame-ce", "micropip"], { checkIntegrity: false });
+        const micropip = pyodide.pyimport("micropip");
+        await micropip.install('polib');
+
+        // Load fonts
+        const fonts = await fetch('/fonts.zip');
+        let fontsBuffer = await fonts.arrayBuffer();
+        await pyodide.unpackArchive(fontsBuffer, "zip");
+
+        // Load singularity.zip as pyodide module
+        const response = await fetch('/singularity.zip');
+        let buffer = await response.arrayBuffer();
+        await pyodide.unpackArchive(buffer, "zip");
+        pyodide.pyimport("singularity");
+
+        // Set pyodide to output errors to console
+        pyodide.setStdout({ batched: (msg) => console.log(msg) });
+        pyodide.setStderr({ batched: (msg) => console.error(msg) });
+
+
+        // Run python code
+        pyodide.runPythonAsync(`
+import asyncio
+import singularity.__main__
+
+async def main():
+  await singularity.__main__.main()
+
+asyncio.create_task(main())
+        `);
+      }
+      main();
+    </script>
+  </body>
+</html>

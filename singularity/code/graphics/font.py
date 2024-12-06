@@ -80,7 +80,9 @@ class FontList(object):
 
         font = self._font_cache.get(item)
         if font is None:
-            font = pygame.font.Font(next(self._generator), item)
+            f = next(self._generator)
+            #font = pygame.font.Font(f, item)
+            font = pygame.font.Font()
             self._font_cache[item] = font
         return font
 

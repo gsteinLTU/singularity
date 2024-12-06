@@ -127,17 +127,17 @@ class MainMenu(dialog.TopDialog):
 
         super(MainMenu, self).rebuild()
 
-    def new_game(self):
-        difficulty = dialog.call_dialog(self.difficulty_dialog, self)
+    async def new_game(self):
+        difficulty = await dialog.call_dialog(self.difficulty_dialog, self)
         if difficulty is not None:
             sv.last_savegame_name = None
             g.new_game(difficulty)
-            dialog.call_dialog(self.map_screen, self)
+            await dialog.call_dialog(self.map_screen, self)
 
-    def load_game(self):
-        did_load = dialog.call_dialog(self.load_dialog, self)
+    async def load_game(self):
+        did_load = await dialog.call_dialog(self.load_dialog, self)
         if did_load:
-            dialog.call_dialog(self.map_screen, self)
+            await dialog.call_dialog(self.map_screen, self)
 
 
 about_message = N_(
