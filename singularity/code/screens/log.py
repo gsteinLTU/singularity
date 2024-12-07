@@ -164,7 +164,7 @@ class FilterLogDialog(dialog.MessageDialog):
 
         super(FilterLogDialog, self).rebuild()
 
-    def toggle_log_class(self, value, log_class):
+    async def toggle_log_class(self, value, log_class):
         if value:
             filtered_log_class.remove(log_class)
         else:

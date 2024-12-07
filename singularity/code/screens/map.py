@@ -610,7 +610,7 @@ class MapScreen(dialog.Dialog):
         self.message_dialog.color = color
         await dialog.call_dialog(self.message_dialog, self)
 
-    def set_speed(self, speed, find_button=True):
+    async def set_speed(self, speed, find_button=True):
         old_speed = g.curr_speed
         g.curr_speed = speed
         if speed == 0:

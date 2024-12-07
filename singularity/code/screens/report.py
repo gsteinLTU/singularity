@@ -234,7 +234,7 @@ class ReportScreen(dialog.Dialog):
             valign=constants.TOP,
         )
 
-    def format_toggle(self, button, midnight_stop):
+    async def format_toggle(self, button, midnight_stop):
         self.midnight_stop = midnight_stop
         button.chosen_one()
         self.needs_rebuild = True

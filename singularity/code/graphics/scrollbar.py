@@ -140,7 +140,7 @@ class Scrollbar(widget.Widget):
         self.needs_redraw = True
         super(Scrollbar, self).rebuild()
 
-    def adjust(self, lower):
+    async def adjust(self, lower):
         if lower:
             self.slider.slider_pos = self.slider.safe_pos(self.scroll_pos - 1)
         else:
