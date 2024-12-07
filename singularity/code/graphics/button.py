@@ -306,7 +306,7 @@ class DialogButton(FunctionButton):
         super(DialogButton, self).__init__(*args, **kwargs)
         self.function = self.show_dialog
 
-    def show_dialog(self):
+    async def show_dialog(self):
         """When the assigned dialog exits, raises Handled with the dialog's
         exit code as a parameter.  Subclass if you care what the code was."""
         if not self.dialog:
@@ -314,7 +314,7 @@ class DialogButton(FunctionButton):
         else:
             from singularity.code.graphics import dialog
 
-            raise constants.Handled(dialog.call_dialog(self.dialog, self))
+            raise constants.Handled(await dialog.call_dialog(self.dialog, self))
 
 
 TOGGLE_VALUE = object()
