@@ -141,7 +141,7 @@ class Slider(button.Button):
                 borders.append(constants.BOTTOM)
             self.button.borders = tuple(borders)
 
-    def handle_drag(self, event):
+    async def handle_drag(self, event):
         if not self.visible:
             return
 
@@ -172,7 +172,7 @@ class Slider(button.Button):
     def safe_pos(self, value):
         return max(0, min(self.slider_max, value))
 
-    def handle_click(self, event):
+    async def handle_click(self, event):
         if self.drag_state == True:
             self.drag_state = None
             if not self.is_over(pygame.mouse.get_pos()):
@@ -192,7 +192,7 @@ class Slider(button.Button):
         else:
             self.slider_pos = self.safe_pos(self.slider_pos + jump_dist)
 
-    def handle_key(self, event):
+    async def handle_key(self, event):
         if event.key not in (
             pygame.K_LEFT,
             pygame.K_RIGHT,
@@ -209,7 +209,7 @@ class Slider(button.Button):
         self.jump(go_lower, big_jump=big_jump, tiny_jump=tiny_jump)
         raise constants.Handled
 
-    def activated(self, event):
+    async def activated(self, event):
         assert event.type == pygame.MOUSEBUTTONUP
         if self.horizontal:
             self.jump(go_lower=(event.pos[0] < self.button.collision_rect[0]))

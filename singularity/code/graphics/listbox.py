@@ -97,7 +97,7 @@ class Listbox(widget.FocusWidget, text.SelectableText):
     def on_scroll(self, scroll_pos):
         self.needs_rebuild = True
 
-    def on_click(self, event):
+    async def on_click(self, event):
         if self.collision_rect.collidepoint(event.pos):
             self.has_focus = True
             self.took_focus(self)
@@ -108,7 +108,7 @@ class Listbox(widget.FocusWidget, text.SelectableText):
                 # ... and select it.
                 self.list_pos = self.safe_pos(index + self.scrollbar.scroll_pos)
 
-    def on_double_click(self, event):
+    async def on_double_click(self, event):
         if self.on_double_click_on_item is None:
             return
         if self.collision_rect.collidepoint(event.pos) and self.item_selectable:
