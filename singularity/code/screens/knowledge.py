@@ -255,8 +255,8 @@ class KnowledgeScreen(dialog.FocusDialog):
 
         return desc_text
 
-    def show(self):
+    async def show(self):
         self.set_knowledge_type(-1)
         self.knowledge_choice.list_pos = 0
         self.knowledge_inner.list_pos = 0
-        return super(KnowledgeScreen, self).show()
+        return await super(KnowledgeScreen, self).show()

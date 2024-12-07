@@ -136,6 +136,6 @@ class MessageListDialog(dialog.YesNoDialog):
         elif event.key == pygame.K_RIGHT:
             self.next_message()
 
-    def show(self):
+    async def show(self):
         self.list_pos = 0
-        return super(MessageListDialog, self).show()
+        return await super(MessageListDialog, self).show()

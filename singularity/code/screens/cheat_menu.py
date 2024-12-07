@@ -84,12 +84,12 @@ class EventManipulationDialog(dialog.ChoiceDescriptionDialog):
         event_instance.expire_now()
         self.needs_rebuild = True
 
-    def show(self):
+    async def show(self):
         self.key_list = sorted(g.events.values(), key=operator.attrgetter("id"))
         self.list = [x.id for x in self.key_list]
 
         self._update_desc_pane()
-        return super(EventManipulationDialog, self).show()
+        return await super(EventManipulationDialog, self).show()
 
     def on_change(self, description_pane, event_spec):
         self.selected_event_spec = event_spec

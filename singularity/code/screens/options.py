@@ -139,7 +139,7 @@ class OptionsScreen(dialog.FocusDialog, dialog.YesNoDialog):
             pane.needs_reconfig = True
         super(OptionsScreen, self).reconfig()
 
-    def show(self):
+    async def show(self):
         self.initial_options = dict(
             fullscreen=gg.fullscreen,
             grab=pygame.event.get_grab(),
@@ -156,7 +156,7 @@ class OptionsScreen(dialog.FocusDialog, dialog.YesNoDialog):
 
         self.set_options(self.initial_options)
 
-        retval = super(OptionsScreen, self).show()
+        retval = await super(OptionsScreen, self).show()
         if retval:
             self.apply_options()
             save_options()

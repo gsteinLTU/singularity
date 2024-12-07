@@ -209,12 +209,12 @@ class Button(text.SelectableText, HotkeyText):
             if self.enabled and (self._selected ^ select_now):  # If there's a change.
                 self.selected = select_now
 
-    def handle_event(self, event):
+    async def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONUP:
             if self.visible and self.enabled and self.is_over(event.pos):
-                self.activate_with_sound(event)
+                await self.activate_with_sound(event)
 
-    def activate_with_sound(self, event):
+    async def activate_with_sound(self, event):
         """Called when the button is pressed or otherwise triggered.
 
         This method is called directly by the GUI handler, and should be
@@ -227,9 +227,9 @@ class Button(text.SelectableText, HotkeyText):
         from singularity.code.mixer import play_sound
 
         play_sound("click")
-        self.activated(event)
+        await self.activated(event)
 
-    def activated(self, event):
+    async def activated(self, event):
         """Called when the button is pressed or otherwise triggered."""
 
         # Sometimes other GUI widgets trigger an activation; ignore
@@ -286,11 +286,11 @@ class ExitDialogButton(FunctionButton):
         if self.parent:
             self.parent.remove_key_handler(pygame.K_ESCAPE, self.activate_default)
 
-    def activate_default(self, event):
+    async def activate_default(self, event):
         if not self.default:
             return
 
-        return self.activate_with_sound(event)
+        return await self.activate_with_sound(event)
 
     def exit_dialog(self):
         """Closes the dialog with the given exit code."""
@@ -368,9 +368,9 @@ class StickyOnOffButton(Button, _FunctionButtonSupportShim):
         if hasattr(self, "_collision_rect"):
             self.watch_mouse(None)
 
-    def activated(self, event):
+    async def activated(self, event):
         self.active = not self.active
-        super(StickyOnOffButton, self).activated(event)
+        await super(StickyOnOffButton, self).activated(event)
 
     def watch_mouse(self, event):
         if not self.active:
@@ -397,9 +397,9 @@ class ToggleButton(Button, _FunctionButtonSupportShim):
         if hasattr(self, "_collision_rect"):
             self.watch_mouse(None)
 
-    def activated(self, event):
+    async def activated(self, event):
         self.chosen_one()
-        super(ToggleButton, self).activated(event)
+        await super(ToggleButton, self).activated(event)
 
     def watch_mouse(self, event):
         if not self.active:

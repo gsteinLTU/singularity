@@ -64,8 +64,11 @@ def log_func_exc(func):
 FIRST_ERROR = True
 
 
-def safe_call(func, args=(), kwargs={}, on_error=None):
+async def safe_call(func, args=(), kwargs={}, on_error=None):
+    import asyncio
     try:
+        if asyncio.iscoroutinefunction(func):
+            return await func(*args, **kwargs)
         return func(*args, **kwargs)
     except Exception:
         global FIRST_ERROR

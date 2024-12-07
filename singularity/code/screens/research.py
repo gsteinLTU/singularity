@@ -219,7 +219,7 @@ class ResearchScreen(dialog.ChoiceDescriptionDialog):
         ).format(TEXT=g.dangers[danger_level].research_desc)
         dialog.call_dialog(self.help_dialog, self)
 
-    def show(self):
+    async def show(self):
         techs = [
             tech for tech in g.pl.techs.values() if tech.available() and not tech.done
         ]
@@ -231,4 +231,4 @@ class ResearchScreen(dialog.ChoiceDescriptionDialog):
         self.listbox.key_list = self.key_list
 
         self.dirty_count = True
-        return super(ResearchScreen, self).show()
+        return await super(ResearchScreen, self).show()

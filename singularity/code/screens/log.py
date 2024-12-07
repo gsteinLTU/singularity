@@ -100,9 +100,9 @@ class LogScreen(dialog.ChoiceDialog):
 
         super(LogScreen, self).rebuild()
 
-    def show(self):
+    async def show(self):
         self.listbox.has_focus = True
-        return super(LogScreen, self).show()
+        return await super(LogScreen, self).show()
 
     def show_filters(self):
         dialog.call_dialog(self.filter_log_dialog, self)

@@ -373,8 +373,8 @@ https://github.com/singularity/singularity
             return False
         return True
 
-    def show(self):
+    async def show(self):
         self.reload_savegames()
         self.text_field.text = ""
         self.text_field.cursor_pos = 0
-        return super(SavegameScreen, self).show()
+        return await super(SavegameScreen, self).show()

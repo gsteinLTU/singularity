@@ -683,7 +683,7 @@ class MapScreen(dialog.Dialog):
         first_dialog.parent = None
         last_dialog.parent = None
 
-    def show(self):
+    async def show(self):
         self.force_update()
 
         from singularity.code.safety import safe_call
@@ -692,7 +692,7 @@ class MapScreen(dialog.Dialog):
         # during the game, it will drop back out of all the menus, without
         # doing anything, and open the pause dialog, so that the player can
         # save or quit even if the error occurs every game tick.
-        while safe_call(super(MapScreen, self).show, on_error=True):
+        while await safe_call(super(MapScreen, self).show, on_error=True):
             for child in self.children:
                 if isinstance(child, dialog.Dialog):
                     child.visible = False

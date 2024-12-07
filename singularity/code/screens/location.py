@@ -268,9 +268,9 @@ class LocationScreen(dialog.Dialog):
             else:
                 canvas.base_cpu.text = ""
 
-    def show(self):
+    async def show(self):
         self.listbox.has_focus = True
-        return super(LocationScreen, self).show()
+        return await super(LocationScreen, self).show()
 
     def rebuild(self):
         # Update base location
@@ -416,7 +416,7 @@ class NewBaseDialog(dialog.FocusDialog, dialog.ChoiceDescriptionDialog):
         else:
             g.pl.considered_buyables = []
 
-    def show(self):
+    async def show(self):
         self.list = []
         self.key_list = []
 
@@ -429,7 +429,7 @@ class NewBaseDialog(dialog.FocusDialog, dialog.ChoiceDescriptionDialog):
         self._update_desc_pane()
         self.needs_rebuild = True
         self.listbox.has_focus = True
-        return super(NewBaseDialog, self).show()
+        return await super(NewBaseDialog, self).show()
 
     def handle_update(self, new_item_pos):
         super(NewBaseDialog, self).handle_update(new_item_pos)

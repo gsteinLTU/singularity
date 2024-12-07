@@ -70,7 +70,7 @@ class StatScreen(dialog.ChoiceDialog):
             canvas.stat_name.text = item[1]
             canvas.stat_value.text = stat.display_value()
 
-    def show(self):
+    async def show(self):
         # FIXME: Remove the needs of this array.
         self.list = [
             ("cash_earned", _("Cash Earned")),
@@ -80,4 +80,4 @@ class StatScreen(dialog.ChoiceDialog):
             ("item_created", _("Item Created")),
         ]
 
-        return super(StatScreen, self).show()
+        return await super(StatScreen, self).show()

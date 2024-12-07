@@ -57,7 +57,7 @@ class BuildDialog(dialog.ChoiceDescriptionDialog):
         self.desc_func = self.on_change
         self.add_handler(constants.KEY, self._got_key, priority=5)
 
-    def show(self):
+    async def show(self):
         self.list = []
         self.key_list = []
 
@@ -78,7 +78,7 @@ class BuildDialog(dialog.ChoiceDescriptionDialog):
             self.default = self.parent.get_current(self.type).spec.id
 
         self._update_desc_pane()
-        return super(BuildDialog, self).show()
+        return await super(BuildDialog, self).show()
 
     def on_description_change(self):
         if self.item is not None:

@@ -25,7 +25,7 @@ from typing import Optional
 
 import pygame
 import operator
-
+import inspect
 import asyncio
 
 from singularity.code.global_hotkeys import detect_global_hotkey
@@ -138,7 +138,9 @@ async def call_dialog(dialog, parent=None):
     if parent_dialog:
         parent_dialog.lost_focus()
 
-    retval = await dialog.show()
+    if dialog:
+        print("Showing dialog", dialog)
+        retval = await dialog.show()
 
     if parent_dialog:
         parent_dialog.regained_focus()
@@ -218,10 +220,12 @@ class Dialog(text.Text):
         if self.needs_timer == None:
             self.needs_timer = bool(self.handlers.get(constants.TICK, False))
         if self.needs_timer or force:
-            pygame.time.set_timer(pygame.USEREVENT, 1000 // g.FPS)
+            pass
+            #pygame.time.set_timer(pygame.USEREVENT, 1000 // g.FPS)
 
     def stop_timer(self):
-        pygame.time.set_timer(pygame.USEREVENT, 0)
+        pass
+        #pygame.time.set_timer(pygame.USEREVENT, 0)
 
     def reset_timer(self):
         self.stop_timer()
@@ -257,15 +261,15 @@ class Dialog(text.Text):
             had_result = False
             for event in pygame.event.get():
                 result = await self.handle(event)
-                print("Dialog loop result:", result)
+
                 if result != constants.NO_RESULT:
                     # break both loops
                     had_result = True
-                    break            
+                    break
 
             if had_result:
                 break
-            
+
             pygame.display.update()
             await asyncio.sleep(1/g.FPS)
             
@@ -420,22 +424,26 @@ class Dialog(text.Text):
             self.needs_redraw = True
             return constants.NO_RESULT
 
-        return self.call_handlers(handlers, event)
+        return await self.call_handlers(handlers, event)
 
-    def fake_mouse(self):
+    async def fake_mouse(self):
         """Fakes a MOUSEMOTION event.  MOUSEMOTION handlers must be able to
         handle a None event, in order to support this method."""
         handlers = self.handlers.get(constants.MOUSEMOTION, [])[:]
-        self.call_handlers(handlers, event=None)
+        await self.call_handlers(handlers, event=None)
 
     def on_close_dialog(self):
         pass
 
-    def call_handlers(self, handlers, event):
+    async def call_handlers(self, handlers, event):
         # Feed the event to all the handlers, in priority order.
         for __, handler in handlers:
             try:
-                handler(event)
+                if asyncio.iscoroutinefunction(handler):
+                    result = await handler(event)
+                else:
+                    result = handler(event)
+                
             except constants.Handled:
                 break  # If it's been handled, we leave the rest alone.
             except constants.ExitDialog as e:
@@ -528,7 +536,7 @@ class NullDialog(Dialog):
     """NullDialog, for when you absolutely, positively need to do nothing at
     all."""
 
-    def show(self):
+    async def show(self):
         pass
 
 
@@ -694,10 +702,10 @@ class TextEntryDialog(TextDialog, FocusDialog):
         self.add_key_handler(pygame.K_KP_ENTER, self.return_text)
         self.add_key_handler(pygame.K_ESCAPE, self.return_nothing)
 
-    def show(self):
+    async def show(self):
         self.text_field.text = self.default_text
         self.text_field.cursor_pos = len(self.default_text)
-        return super(TextEntryDialog, self).show()
+        return await super(TextEntryDialog, self).show()
 
     def return_nothing(self, event=None):
         if event and event.type == pygame.KEYUP:
@@ -739,7 +747,7 @@ class ChoiceDialog(YesNoDialog):
     def return_list_pos(self):
         return self.listbox.list_pos
 
-    def show(self):
+    async def show(self):
         if type(self.default) == int:
             self.listbox.list_pos = self.default
         elif type(self.default) == str and self.default in self.list:
@@ -748,7 +756,7 @@ class ChoiceDialog(YesNoDialog):
             self.listbox.list_pos = 0
         self.listbox.auto_scroll = True
 
-        return super(ChoiceDialog, self).show()
+        return await super(ChoiceDialog, self).show()
 
     def rebuild(self):
         self.listbox.list = self.list
