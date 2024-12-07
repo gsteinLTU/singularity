@@ -227,7 +227,12 @@ class Button(text.SelectableText, HotkeyText):
         from singularity.code.mixer import play_sound
 
         play_sound("click")
-        await self.activated(event)
+
+        import asyncio
+        if asyncio.iscoroutinefunction(self.activated):
+            await self.activated(event)
+        else:
+            self.activated(event)
 
     async def activated(self, event):
         """Called when the button is pressed or otherwise triggered."""

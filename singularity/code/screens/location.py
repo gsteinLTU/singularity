@@ -299,7 +299,7 @@ class LocationScreen(dialog.Dialog):
 
         super(LocationScreen, self).rebuild()
 
-    def power_state(self):
+    async def power_state(self):
         if 0 <= self.listbox.list_pos < len(self.listbox.key_list):
             base = self.listbox.key_list[self.listbox.list_pos]
             base.switch_power()
