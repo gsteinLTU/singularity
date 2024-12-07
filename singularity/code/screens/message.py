@@ -122,15 +122,15 @@ class MessageListDialog(dialog.YesNoDialog):
             self.prev_button.visible = True
             self.next_button.visible = True
 
-    def prev_message(self):
+    async def prev_message(self):
         self.list_pos = max(self.list_pos - 1, 0)
         self.needs_rebuild = True
 
-    def next_message(self):
+    async def next_message(self):
         self.list_pos = min(self.list_pos + 1, len(self.list) - 1)
         self.needs_rebuild = True
 
-    def handle_key(self, event):
+    async def handle_key(self, event):
         if event.key == pygame.K_LEFT:
             self.prev_message()
         elif event.key == pygame.K_RIGHT:

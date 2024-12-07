@@ -21,6 +21,7 @@
 from __future__ import absolute_import
 
 import pygame
+import asyncio
 
 from singularity.code.graphics import constants, widget, text, image
 
@@ -108,7 +109,7 @@ class HotkeyText(text.Text):
         self._new_hotkey(parsed_hotkey["key"])
         return parsed_hotkey["text"]
 
-    def handle_hotkey(self, event):
+    async def handle_hotkey(self, event):
         if event.type == pygame.KEYDOWN:
             if (
                 self.visible
@@ -116,7 +117,10 @@ class HotkeyText(text.Text):
                 and self.hotkey in (event.unicode, event.key)
             ):
                 if self.hotkey_func:
-                    self.hotkey_func(event)
+                    if asyncio.iscoroutinefunction(self.hotkey_func):
+                        await self.hotkey_func(event)
+                    else:
+                        self.hotkey_func(event)
 
     def _retranslate(self):
         new_text = _(self._untranslated_text)
