@@ -95,15 +95,15 @@ class Event(object):
     def decayable_event(self):
         return self.duration is not None
 
-    def new_day(self):
+    async def new_day(self):
         if not self.decayable_event:
             return
 
         if self.is_past_expiry_date:
-            self.expire_now()
+            await self.expire_now()
 
-    def expire_now(self):
-        self.effect.undo_effect()
+    async def expire_now(self):
+        await self.effect.undo_effect()
         self.triggered = 0
         self.triggered_at = -1
 

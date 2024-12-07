@@ -29,11 +29,11 @@ class Effect(object):
         self.parent_name = parent.__class__.__name__
         self.effect_stack = effect_stack
 
-    def trigger(self, loading_savegame=False):
-        self._apply_effect(loading_savegame=loading_savegame)
+    async def trigger(self, loading_savegame=False):
+        await self._apply_effect(loading_savegame=loading_savegame)
 
-    def undo_effect(self):
-        self._apply_effect(undo_effect=True)
+    async def undo_effect(self):
+        await self._apply_effect(undo_effect=True)
 
     async def _apply_effect(self, loading_savegame=False, undo_effect=False):
         # effect_data is now a stack of instructions to run the effect.

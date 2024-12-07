@@ -433,23 +433,23 @@ class Player(object):
 
         if dead_bases:
             # Base disposal and dialogs.
-            self.remove_bases(dead_bases)
+            await self.remove_bases(dead_bases)
             need_recalc_cpu = True
 
         # Random Events
         if not grace:
-            self._check_event(time_sec)
+            await self._check_event(time_sec)
 
         # Process any complete days.
         if day_passed:
-            self.new_day()
+            await self.new_day()
 
         if need_recalc_cpu:
             self.recalc_cpu()
 
         return mins_passed
 
-    def _check_event(self, time_sec):
+    async def _check_event(self, time_sec):
         for event_id in g.events:
             event_spec = g.events[event_id]
             event_target = self.events.get(event_id, None)
@@ -459,11 +459,11 @@ class Player(object):
                 continue
 
             if chance.roll_interval(event_spec.chance / 10000.0, time_sec):
-                self.trigger_event(event_spec)
+                await self.trigger_event(event_spec)
                 return True  # Don't trigger more than one at a time.
         return False
 
-    def trigger_event(self, event_spec, show_event_description=True):
+    async def trigger_event(self, event_spec, show_event_description=True):
         event_id = event_spec.id
         event_target = self.events.get(event_id, None)
 
@@ -476,7 +476,7 @@ class Player(object):
         event_target.trigger()
         if show_event_description:
             self.pause_game()
-            g.map_screen.show_message(event_target.description)
+            await g.map_screen.show_message(event_target.description)
         self.log.append(LogEmittedEvent(self.raw_sec, event_id))
 
     def recalc_cpu(self):
@@ -565,13 +565,13 @@ class Player(object):
         return int((self.interest_rate * self.cash) // 10000)
 
     # Run every day at midnight.
-    def new_day(self):
+    async def new_day(self):
         # Reduce suspicion.
         for group in self.groups.values():
-            group.new_day()
+            await group.new_day()
         for event in self.events.values():
             if event.triggered and event.decayable_event:
-                event.new_day()
+                await event.new_day()
         if self.last_autosave_day + AUTO_SAVE_EVERY_X_DAYS < self.time_day + 1 and not self.lost_game():
             auto_save()
             print("Autosave for day " + str(self.time_day))
@@ -582,7 +582,7 @@ class Player(object):
         g.map_screen.find_speed_button()
         g.map_screen.needs_rebuild = True
 
-    def remove_bases(self, dead_bases):
+    async def remove_bases(self, dead_bases):
         discovery_locs = []
         for base, reason in dead_bases:
             base_name = base.name
@@ -604,7 +604,7 @@ class Player(object):
             self.log.append(log_message)
             self.pause_game()
             base.destroy()
-            g.map_screen.show_message(log_message.full_message, color="red")
+            await g.map_screen.show_message(log_message.full_message, color="red")
 
         # Now we update the internal information about what locations had
         # the most recent discovery and the nextmost recent one.  First,

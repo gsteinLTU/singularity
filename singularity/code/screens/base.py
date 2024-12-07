@@ -466,7 +466,7 @@ class BaseScreen(dialog.Dialog):
         if not confirmed:
             return
         for item_spec, count in best_item_by_type.values():
-            self.set_current(item_spec.item_type, item_spec, count)
+            await self.set_current(item_spec.item_type, item_spec, count)
         self.needs_rebuild = True
 
     def get_current(self, type):

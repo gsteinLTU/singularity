@@ -71,8 +71,8 @@ class EventManipulationDialog(dialog.ChoiceDescriptionDialog):
         self.description = ""
         self.desc_func = self.on_change
 
-    def _trigger_event(self):
-        g.pl.trigger_event(self.selected_event_spec, show_event_description=False)
+    async def _trigger_event(self):
+        await g.pl.trigger_event(self.selected_event_spec, show_event_description=False)
         self.needs_rebuild = True
 
     def _expire_event(self):

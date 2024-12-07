@@ -106,7 +106,7 @@ class Group(object):
         # reduction, or a base .01% reduction, whichever is better.
         return max(1, (self.suspicion * self.suspicion_decay) // 10000)
 
-    def new_day(self):
+    async def new_day(self):
         self.alter_suspicion(-self.decay_rate)
 
     def alter_suspicion(self, change):

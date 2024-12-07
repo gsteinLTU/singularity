@@ -610,7 +610,7 @@ class YesNoDialog(TextDialog):
         self.add_key_handler(pygame.K_KP_ENTER, self.on_return)
         self.add_key_handler(pygame.K_ESCAPE, self.on_escape)
 
-    def on_return(self, event):
+    async def on_return(self, event):
         if event and event.type == pygame.KEYUP:
             return
         if self.invert_enter:
@@ -618,7 +618,7 @@ class YesNoDialog(TextDialog):
         else:
             self.yes_button.activate_with_sound(event)
 
-    def on_escape(self, event):
+    async def on_escape(self, event):
         if event and event.type == pygame.KEYUP:
             return
         if self.invert_escape:
