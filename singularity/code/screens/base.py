@@ -589,7 +589,7 @@ class BaseScreen(dialog.Dialog):
             self.needs_rebuild = True
             self.parent.parent.needs_rebuild = True
 
-    def switch_base(self, forwards):
+    async def switch_base(self, forwards):
         self.base = self.base.next_base(forwards)
         self.needs_rebuild = True
 
