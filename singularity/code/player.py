@@ -252,7 +252,7 @@ class Player(object):
             raise ValueError("Cannot assign negative CPU units to %s" % task_id)
         self.cpu_usage[task_id] = new_cpu_assignment
 
-    def give_time(self, time_sec, midnight_stop=True):
+    async def give_time(self, time_sec, midnight_stop=True):
         if time_sec <= 0:
             assert time_sec == 0, "give_time cannot go backwards in time!"
             return 0
@@ -422,7 +422,7 @@ class Player(object):
             self.had_grace = False
 
             self.pause_game()
-            g.map_screen.show_story_section("Grace Warning")
+            await g.map_screen.show_story_section("Grace Warning")
 
         dead_bases = _check_for_dead_bases(grace,
                                            unpaid_cpu_maintenance,

@@ -665,7 +665,7 @@ class MapScreen(dialog.Dialog):
             self.stop_timer()
         self.needs_rebuild = True
 
-    def show_story_section(self, name):
+    async def show_story_section(self, name):
         section = list(g.get_story_section(name))
 
         first_dialog = dialog.YesNoDialog(
@@ -677,7 +677,7 @@ class MapScreen(dialog.Dialog):
             story_dialog = first_dialog if num != len(section) - 1 else last_dialog
             story_dialog.text = segment
 
-            if not dialog.call_dialog(story_dialog, self):
+            if not await dialog.call_dialog(story_dialog, self):
                 break
 
         first_dialog.parent = None
@@ -729,17 +729,17 @@ https://github.com/singularity/singularity
 
     leftovers = 1
 
-    def on_tick(self, event):
+    async def on_tick(self, event):
         old_speed = g.curr_speed
 
         if not g.pl.intro_shown:
             g.pl.intro_shown = True
             self.needs_warning = False
-            self.show_story_section("Intro")
+            await self.show_story_section("Intro")
 
         if self.needs_warning:
             warnings = warning.refresh_warnings()
-            self.messages.show_list(warning.Warning, warnings)
+            await self.messages.show_list(warning.Warning, warnings)
             self.needs_warning = False
 
         mins_passed = 0
@@ -755,10 +755,10 @@ https://github.com/singularity/singularity
             self.leftovers %= 1
 
             # Run this tick.
-            mins_passed = g.pl.give_time(secs)
+            mins_passed = await g.pl.give_time(secs)
 
             # Display any message stacked.
-            self.messages.show_list(logmessage.AbstractLogMessage, g.pl.curr_log)
+            await self.messages.show_list(logmessage.AbstractLogMessage, g.pl.curr_log)
 
         if old_speed != g.curr_speed:
             self.find_speed_button()
@@ -782,7 +782,7 @@ https://github.com/singularity/singularity
             lost_story = ["", "Lost No Bases", "Lost Suspicion"]
 
             mixer.play_music("lose")
-            self.show_story_section(lost_story[lost])
+            await self.show_story_section(lost_story[lost])
             raise constants.ExitDialog
 
     def on_theme(self):

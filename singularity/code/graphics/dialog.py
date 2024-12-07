@@ -30,7 +30,7 @@ import asyncio
 
 from singularity.code.global_hotkeys import detect_global_hotkey
 from singularity.code.graphics import g, constants, widget, text, button, listbox
-
+from singularity.code.timer import CustomTimer
 
 KEYPAD = {
     pygame.K_KP1: 1,
@@ -220,12 +220,10 @@ class Dialog(text.Text):
         if self.needs_timer == None:
             self.needs_timer = bool(self.handlers.get(constants.TICK, False))
         if self.needs_timer or force:
-            pass
-            #pygame.time.set_timer(pygame.USEREVENT, 1000 // g.FPS)
+            CustomTimer.set_timer(pygame.USEREVENT, 1000 // g.FPS)
 
     def stop_timer(self):
-        pass
-        #pygame.time.set_timer(pygame.USEREVENT, 0)
+        CustomTimer.cancel_timer(pygame.USEREVENT)
 
     def reset_timer(self):
         self.stop_timer()
@@ -649,10 +647,10 @@ class MessageDialog(TextDialog):
         self.add_key_handler(pygame.K_RETURN, self.on_return)
         self.add_key_handler(pygame.K_KP_ENTER, self.on_return)
 
-    def on_return(self, event):
+    async def on_return(self, event):
         if event.type == pygame.KEYUP:
             return
-        self.ok_button.activate_with_sound(event)
+        await self.ok_button.activate_with_sound(event)
 
 
 class TextEntryDialog(TextDialog, FocusDialog):

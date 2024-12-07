@@ -35,7 +35,7 @@ class Effect(object):
     def undo_effect(self):
         self._apply_effect(undo_effect=True)
 
-    def _apply_effect(self, loading_savegame=False, undo_effect=False):
+    async def _apply_effect(self, loading_savegame=False, undo_effect=False):
         # effect_data is now a stack of instructions to run the effect.
         # multiple effect can be run simultaneous
         effect_iter = iter(self.effect_stack)
@@ -62,7 +62,7 @@ class Effect(object):
                 ), "One-shot effects (winning the game) cannot be undone!"
                 mixer.play_music("win")
                 if not loading_savegame:
-                    g.map_screen.show_story_section("Win")
+                    await g.map_screen.show_story_section("Win")
                 for group in g.pl.groups.values():
                     group.is_actively_discovering_bases = False
                 g.pl.apotheosis = True
