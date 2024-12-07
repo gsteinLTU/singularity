@@ -36,7 +36,7 @@ def quicksave():
         create_savegame(QUICKSAVE_NAME)
 
 
-def quickload():
+async def quickload():
     if not g.is_game_running():
         return
     map_screen = Dialog.current_dialog
@@ -56,7 +56,7 @@ def quickload():
         anchor=constants.MID_CENTER,
         text=msg,
     )
-    go_ahead = dialog.call_dialog(yn, map_screen)
+    go_ahead = await dialog.call_dialog(yn, map_screen)
     yn.parent = None
     if not go_ahead:
         return

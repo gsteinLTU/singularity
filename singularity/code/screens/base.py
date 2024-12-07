@@ -417,7 +417,7 @@ class BaseScreen(dialog.Dialog):
             return True
         return False
 
-    def auto_build(self):
+    async def auto_build(self):
         base = self.base
         if base is None or base.spec.force_cpu:
             return
@@ -461,7 +461,7 @@ class BaseScreen(dialog.Dialog):
 
         confirm_dialog = YesNoDialog(self, text=text)
         self.needs_rebuild = True
-        confirmed = dialog.call_dialog(confirm_dialog, self)
+        confirmed = await dialog.call_dialog(confirm_dialog, self)
         g.pl.considered_buyables = []
         if not confirmed:
             return
@@ -472,7 +472,7 @@ class BaseScreen(dialog.Dialog):
     def get_current(self, type):
         return self.base.items[type.id]
 
-    def set_current(self, type, item_type, count):
+    async def set_current(self, type, item_type, count):
         if type.id == "cpu":
             space_left = self.base.space_left_for(item_type)
 
@@ -489,7 +489,7 @@ class BaseScreen(dialog.Dialog):
                     anchor=constants.MID_CENTER,
                     text=msg,
                 )
-                dialog.call_dialog(md, self)
+                await dialog.call_dialog(md, self)
                 md.parent = None
                 return
 
@@ -509,7 +509,7 @@ class BaseScreen(dialog.Dialog):
                     anchor=constants.MID_CENTER,
                     text=msg,
                 )
-                dialog.call_dialog(md, self)
+                await dialog.call_dialog(md, self)
                 md.parent = None
                 return
 
@@ -529,7 +529,7 @@ class BaseScreen(dialog.Dialog):
                         anchor=constants.MID_CENTER,
                         text=msg,
                     )
-                    go_ahead = dialog.call_dialog(yn, self)
+                    go_ahead = await dialog.call_dialog(yn, self)
                     yn.parent = None
                     if not go_ahead:
                         return
@@ -550,7 +550,7 @@ class BaseScreen(dialog.Dialog):
                     anchor=constants.MID_CENTER,
                     text=msg,
                 )
-                go_ahead = dialog.call_dialog(yn, self)
+                go_ahead = await dialog.call_dialog(yn, self)
                 yn.parent = None
                 if not go_ahead:
                     return
@@ -569,7 +569,7 @@ class BaseScreen(dialog.Dialog):
 
         self.base.recalc_cpu()
 
-    def build_item(self, type):
+    async def build_item(self, type):
         if type.id == "cpu":
             build_dialog = self.multiple_build_dialog
         else:
@@ -577,7 +577,7 @@ class BaseScreen(dialog.Dialog):
 
         build_dialog.type = type
 
-        result = dialog.call_dialog(build_dialog, self)
+        result = await dialog.call_dialog(build_dialog, self)
         if result is not None and 0 <= result < len(build_dialog.key_list):
             item_type = build_dialog.key_list[result]
 

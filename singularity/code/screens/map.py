@@ -289,8 +289,8 @@ class GameMenuDialog(dialog.SimpleMenuDialog):
         self.savename_dialog.text = _("Enter a name for this save.")
         super(GameMenuDialog, self).rebuild()
 
-    def load_game(self):
-        did_load = dialog.call_dialog(self.load_dialog, self)
+    async def load_game(self):
+        did_load = await dialog.call_dialog(self.load_dialog, self)
         if did_load:
             self._map_screen.force_update()
             raise constants.ExitDialog(False)
@@ -310,7 +310,7 @@ class GameMenuDialog(dialog.SimpleMenuDialog):
             self.savename_dialog.ok_button.enabled = True
             self.savename_dialog.text = _("Enter a name for this save.")
 
-    def save_game(self):
+    async def save_game(self):
         # If no savename was set yet, use current difficulty
         if not sv.last_savegame_name:
             sv.last_savegame_name = g.strip_hotkey(g.pl.difficulty.name)
@@ -318,7 +318,7 @@ class GameMenuDialog(dialog.SimpleMenuDialog):
         self.savename_dialog.add_handler(constants.KEYUP, self.check_filename)
         self.savename_dialog.text_field.has_focus = True
 
-        name = dialog.call_dialog(self.savename_dialog, self).strip()
+        name = await dialog.call_dialog(self.savename_dialog, self).strip()
         if name:
             if sv.savegame_exists(name):
                 yn = dialog.YesNoDialog(
@@ -331,7 +331,7 @@ class GameMenuDialog(dialog.SimpleMenuDialog):
                         "Are you sure to overwrite the saved game ?"
                     ),
                 )
-                overwrite = dialog.call_dialog(yn, self)
+                overwrite = await dialog.call_dialog(yn, self)
                 if not overwrite:
                     self.save_game()
 
@@ -455,8 +455,8 @@ class MapScreen(dialog.Dialog):
 
         self.menu_dialog = GameMenuDialog(self)
 
-        def show_menu():
-            exit = dialog.call_dialog(self.menu_dialog, self)
+        async def show_menu():
+            exit = await dialog.call_dialog(self.menu_dialog, self)
             if exit:
                 raise constants.ExitDialog
 
@@ -603,12 +603,12 @@ class MapScreen(dialog.Dialog):
         elif event.key == constants.XO1_SQUARE:
             self.set_speed(0)
 
-    def show_message(self, message, color=None):
+    async def show_message(self, message, color=None):
         self.message_dialog.text = message
         if color == None:
             color = "text"
         self.message_dialog.color = color
-        dialog.call_dialog(self.message_dialog, self)
+        await dialog.call_dialog(self.message_dialog, self)
 
     def set_speed(self, speed, find_button=True):
         old_speed = g.curr_speed
@@ -641,9 +641,9 @@ class MapScreen(dialog.Dialog):
 
         self.set_speed(speeds[new_index])
 
-    def open_location(self, location):
+    async def open_location(self, location):
         self.location_dialog.location = g.pl.locations[location]
-        dialog.call_dialog(self.location_dialog, self)
+        await dialog.call_dialog(self.location_dialog, self)
         return
 
     def find_speed_button(self):
@@ -717,12 +717,12 @@ https://github.com/singularity/singularity
                 no_type=N_("&QUIT"),
                 text=msg,
             )
-            cont = dialog.call_dialog(d, self)
+            cont = await dialog.call_dialog(d, self)
 
             if not cont:
                 raise SystemExit
 
-            exit = dialog.call_dialog(self.menu_dialog, self)
+            exit = await dialog.call_dialog(self.menu_dialog, self)
             if exit:
                 self.visible = False
                 return

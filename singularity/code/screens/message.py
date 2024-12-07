@@ -34,13 +34,13 @@ class MessageDialogs(object):
             screen, yes_type=N_("&CONTINUE"), no_type=N_("&PAUSE")
         )
 
-    def show_list(self, message_type, messages):
+    async def show_list(self, message_type, messages):
         if len(messages) == 0:
             return
 
         self.dialog.type = message_type
         self.dialog.list = messages
-        ret = dialog.call_dialog(self.dialog, self.screen)
+        ret = await dialog.call_dialog(self.dialog, self.screen)
 
         # Pause game
         if not ret:

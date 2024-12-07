@@ -306,31 +306,31 @@ class LocationScreen(dialog.Dialog):
             self.needs_rebuild = True
             self.parent.needs_rebuild = True
 
-    def destroy_base(self):
+    async def destroy_base(self):
         if 0 <= self.listbox.list_pos < len(self.listbox.key_list):
             selected_base = self.listbox.key_list[self.listbox.list_pos]
             all_active_bases = [b for b in g.all_bases() if b.maintains_singularity]
             if len(all_active_bases) == 1 and all_active_bases[0] == selected_base:
-                dialog.call_dialog(self.cannot_destroy_last_base, self)
-            elif dialog.call_dialog(self.confirm_destroy, self):
+                await dialog.call_dialog(self.cannot_destroy_last_base, self)
+            elif await dialog.call_dialog(self.confirm_destroy, self):
                 selected_base.destroy()
                 self.listbox.list = [b.name for b in self.location.bases]
                 self.listbox.key_list = self.location.bases
                 self.needs_rebuild = True
                 self.parent.needs_rebuild = True
 
-    def open_base(self):
+    async def open_base(self):
         if 0 <= self.listbox.list_pos < len(self.listbox.key_list):
             base = self.listbox.key_list[self.listbox.list_pos]
             if not base.done:
                 return
             self.base_dialog.base = base
-            dialog.call_dialog(self.base_dialog, self)
+            await dialog.call_dialog(self.base_dialog, self)
             self.needs_rebuild = True
             self.parent.needs_rebuild = True
 
-    def new_base(self):
-        result = dialog.call_dialog(self.new_base_dialog, self)
+    async def new_base(self):
+        result = await dialog.call_dialog(self.new_base_dialog, self)
         if result:
             base_type, base_name = result
             new_base = base.Base(base_type, base_name)
@@ -338,11 +338,11 @@ class LocationScreen(dialog.Dialog):
             self.needs_rebuild = True
             self.parent.needs_rebuild = True
 
-    def rename_base(self):
+    async def rename_base(self):
         if 0 <= self.listbox.list_pos < len(self.listbox.key_list):
             base = self.listbox.key_list[self.listbox.list_pos]
             self.name_dialog.default_text = base.name
-            name = dialog.call_dialog(self.name_dialog, self)
+            name = await dialog.call_dialog(self.name_dialog, self)
             if name:
                 base.name = name
                 self.needs_rebuild = True

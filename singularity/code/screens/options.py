@@ -181,7 +181,7 @@ class OptionsScreen(dialog.FocusDialog, dialog.YesNoDialog):
         for pane in self.tabs_panes:
             pane.apply_options()
 
-    def check_restart(self):
+    async def check_restart(self):
         # Test all changes that require a restart. Currently, none.
         # We keep it for future need...
         need_restart = False
@@ -203,7 +203,7 @@ class OptionsScreen(dialog.FocusDialog, dialog.YesNoDialog):
 Would you like to restart the game now?"""
             ),
         )
-        if dialog.call_dialog(ask_restart, self):
+        if await dialog.call_dialog(ask_restart, self):
             # YES, go for it
             # TODO: check if there is an ongoing game, save it under a special
             #      name and automatically load it after restart using a custom

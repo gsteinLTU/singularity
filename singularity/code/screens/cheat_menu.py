@@ -239,8 +239,8 @@ class CheatMenuDialog(dialog.SimpleMenuDialog):
             )
         self._map_screen.needs_rebuild = True
 
-    def steal_money(self):
-        asked = dialog.call_dialog(self.steal_amount_dialog, self)
+    async def steal_money(self):
+        asked = await dialog.call_dialog(self.steal_amount_dialog, self)
         try:
             g.pl.cash += int(asked)
         except ValueError:
@@ -276,7 +276,7 @@ class CheatMenuDialog(dialog.SimpleMenuDialog):
             g.pl.display_discover = "none"
         self._map_screen.needs_rebuild = True
 
-    def hidden_state(self):
+    async def hidden_state(self):
         presenters = {
             float: lambda x: round(x, 4),
             Location: lambda x: x.id,
@@ -398,4 +398,4 @@ class CheatMenuDialog(dialog.SimpleMenuDialog):
         )
         state_dialog.listbox.item_selectable = False
         state_dialog.listbox.align = constants.LEFT
-        dialog.call_dialog(state_dialog, self)
+        await dialog.call_dialog(state_dialog, self)

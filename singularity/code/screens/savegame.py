@@ -265,7 +265,7 @@ class SavegameScreen(dialog.ChoiceDialog):
         self.delete_button.enabled = True if self.list else False
         self._new_item_selected()
 
-    def delete_savegame(self):
+    async def delete_savegame(self):
         save = self.listbox.current_item()
         if save is None:
             return
@@ -277,7 +277,7 @@ class SavegameScreen(dialog.ChoiceDialog):
             anchor=constants.MID_CENTER,
             text=_("Are you sure to delete the saved game ?"),
         )
-        delete = dialog.call_dialog(yn, self)
+        delete = await dialog.call_dialog(yn, self)
         yn.parent = None
         if delete:
             sv.delete_savegame(save)
@@ -291,7 +291,7 @@ class SavegameScreen(dialog.ChoiceDialog):
             return
         raise constants.ExitDialog(True)
 
-    def convert_save(self):
+    async def convert_save(self):
         save = self.listbox.current_item()
         if save is None:
             return
@@ -314,7 +314,7 @@ class SavegameScreen(dialog.ChoiceDialog):
                         "Are you sure to overwrite the saved game ?"
                     ),
                 )
-                overwrite = dialog.call_dialog(yn, self)
+                overwrite = await dialog.call_dialog(yn, self)
                 if not overwrite:
                     return
             else:
@@ -326,7 +326,7 @@ class SavegameScreen(dialog.ChoiceDialog):
             sv.delete_savegame(save)
         self.reload_savegames()
 
-    def _load_savegame(self, save):
+    async def _load_savegame(self, save):
         try:
             sv.load_savegame(save)
         except sv.SavegameVersionException as e:
@@ -343,7 +343,7 @@ This save file '{SAVE_NAME}' is from an unsupported or invalid version:
                 ).format(SAVE_NAME=save.name, VERSION=e.version),
             )
 
-            dialog.call_dialog(md, self)
+            await dialog.call_dialog(md, self)
             return False
         except Exception:
             log_func_exc(sv.load_savegame)
@@ -369,7 +369,7 @@ https://github.com/singularity/singularity
                     ),
                 ),
             )
-            dialog.call_dialog(md, self)
+            await dialog.call_dialog(md, self)
             return False
         return True
 

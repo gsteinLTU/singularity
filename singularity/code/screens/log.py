@@ -64,7 +64,7 @@ class LogScreen(dialog.ChoiceDialog):
             item_selectable=True,
         )
 
-    def handle_double_click(self, event):
+    async def handle_double_click(self, event):
         if self.listbox.is_over(event.pos) and 0 <= self.listbox.list_pos < len(
             self.key_list
         ):
@@ -81,7 +81,7 @@ class LogScreen(dialog.ChoiceDialog):
             # than we need).
             try:
                 self.visible = False
-                dialog.call_dialog(message_dialog, self.parent)
+                await dialog.call_dialog(message_dialog, self.parent)
             finally:
                 self.visible = True
                 self.needs_rebuild = True
@@ -104,8 +104,8 @@ class LogScreen(dialog.ChoiceDialog):
         self.listbox.has_focus = True
         return await super(LogScreen, self).show()
 
-    def show_filters(self):
-        dialog.call_dialog(self.filter_log_dialog, self)
+    async def show_filters(self):
+        await dialog.call_dialog(self.filter_log_dialog, self)
         self.needs_rebuild = True
 
     def render_log_message(self, message):
